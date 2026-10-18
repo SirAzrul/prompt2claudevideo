@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cara Bina Nota Digital</title>
+<style>
+  /* ---------- Token warna ---------- */
+  :root {
+    --bg: #f4f2ff;
+    --text: #15132b;
+    --muted: #3d3a57;
+    --card: rgba(255, 255, 255, 0.88);
+    --card-solid: #ffffff;
+    --border: rgba(21, 19, 43, 0.14);
+    --soft: rgba(109, 40, 217, 0.08);
+    --a1: #6d28d9;
+    --a2: #0e7490;
+    --on-accent: #ffffff;
+    --ok: #047857;
+    --warn-bg: #fff4e5;
+    --warn-text: #7a3b00;
+    --warn-border: #f0b46b;
+    --code-bg: #f1effa;
+    --blob1: #a78bfa;
+    --blob2: #5eead4;
+    --blob3: #f9a8d4;
+    --blob-op: 0.55;
+    --focus: #b45309;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0b0a1a; --text: #f5f4ff; --muted: #cdcae8; --card: rgba(22, 20, 44, 0.88);
+      --card-solid: #16142c; --border: rgba(245, 244, 255, 0.16); --soft: rgba(167, 139, 250, 0.12);
+      --code-bg: #1f1c3d; --warn-bg: #3a2608; --warn-text: #ffd9a8; --warn-border: #a86a1f;
+      --ok: #059669; --blob-op: 0.4; --focus: #fbbf24; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0b0a1a; --text: #f5f4ff; --muted: #cdcae8; --card: rgba(22, 20, 44, 0.88);
+    --card-solid: #16142c; --border: rgba(245, 244, 255, 0.16); --soft: rgba(167, 139, 250, 0.12);
+    --code-bg: #1f1c3d; --warn-bg: #3a2608; --warn-text: #ffd9a8; --warn-border: #a86a1f;
+    --ok: #059669; --blob-op: 0.4; --focus: #fbbf24; color-scheme: dark;
+  }
+
+  /* ---------- Asas ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 18px;
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+  .wrap { width: 100%; max-width: 820px; margin: 0 auto; padding: 0 16px; }
+  h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; }
+  h2 { font-size: 1.6rem; }
+  h3 { font-size: 1.15rem; }
+  p { margin: 0 0 14px; }
+  ul, ol { margin: 0 0 14px; padding-left: 1.3em; }
+  li { margin-bottom: 8px; }
+  b, strong { font-weight: 700; }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+
+  /* ---------- Aurora ---------- */
+  .aurora { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+  .aurora span {
+    position: absolute; width: 70vmax; height: 70vmax; border-radius: 50%;
+    filter: blur(70px); opacity: var(--blob-op);
+    animation: drift 26s ease-in-out infinite alternate;
+  }
+  .aurora .b1 { background: radial-gradient(circle, var(--blob1), transparent 65%); top: -30vmax; left: -20vmax; }
+  .aurora .b2 { background: radial-gradient(circle, var(--blob2), transparent 65%); top: 10vmax; right: -30vmax; animation-delay: -8s; }
+  .aurora .b3 { background: radial-gradient(circle, var(--blob3), transparent 65%); bottom: -35vmax; left: 10vmax; animation-delay: -16s; }
+  @keyframes drift {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(6vmax, 4vmax) scale(1.12); }
+  }
+  @media (prefers-reduced-motion: reduce) { .aurora span { animation: none; } }
+
+  /* ---------- Header + progress ---------- */
+  .topbar {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--card);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 0 12px;
+  }
+  .topbar-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+  .brand { display: flex; flex-direction: column; min-width: 0; }
+  .brand strong { font-size: 1.1rem; }
+  .brand .sub { font-size: 0.9rem; color: var(--muted); }
+  .progress-meta { display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: 600; margin-bottom: 6px; }
+  .progress { height: 12px; border-radius: 999px; background: var(--soft); border: 1px solid var(--border); overflow: hidden; }
+  .progress-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--a1), var(--a2));
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }
+
+  /* ---------- Butang ---------- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 48px; padding: 10px 20px;
+    font: inherit; font-size: 1rem; font-weight: 700;
+    border-radius: 14px; border: 2px solid transparent;
+    cursor: pointer; text-align: center; line-height: 1.2;
+    transition: transform 0.1s ease, background 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+  .btn-primary { background: linear-gradient(135deg, var(--a1), var(--a2)); color: var(--on-accent); }
+  .btn-ghost { background: var(--card-solid); color: var(--text); border-color: var(--border); }
+  .btn-done { background: var(--card-solid); color: var(--text); border-color: var(--ok); width: 100%; }
+  .btn-done.is-done { background: var(--ok); color: #fff; }
+  .theme-btn { flex-shrink: 0; padding: 10px 14px; }
+  .theme-btn svg { width: 22px; height: 22px; }
+  .icon-sun { display: none; }
+  [data-theme="dark"] .icon-sun { display: block; }
+  [data-theme="dark"] .icon-moon { display: none; }
+
+  /* ---------- Intro + nav ---------- */
+  main { padding: 20px 0 40px; }
+  .intro { color: var(--muted); font-size: 1.05rem; }
+  .steps-nav { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 16px 0 18px; }
+  .chip {
+    min-height: 52px; padding: 6px 4px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font: inherit; font-weight: 700; font-size: 1rem;
+    background: var(--card); color: var(--text);
+    border: 2px solid var(--border); border-radius: 14px; cursor: pointer;
+  }
+  .chip .t { display: none; font-size: 0.78rem; font-weight: 600; color: var(--muted); }
+  .chip.is-done { border-color: var(--ok); }
+  .chip.is-done .n::after { content: " \2713"; color: var(--ok); }
+  .chip[aria-current="step"] { background: linear-gradient(135deg, var(--a1), var(--a2)); color: var(--on-accent); border-color: transparent; }
+  .chip[aria-current="step"] .t, .chip[aria-current="step"].is-done .n::after { color: var(--on-accent); }
+  .chip.cert { grid-column: span 2; }
+  .chip.locked .n::before { content: "\1F512\FE0E  "; font-size: 0.9em; }
+  @media (min-width: 640px) {
+    .steps-nav { grid-template-columns: repeat(7, 1fr); }
+    .chip.cert { grid-column: auto; }
+    .chip .t { display: block; }
+  }
+
+  /* ---------- Kad bahagian ---------- */
+  .card {
+    background: var(--card);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    border: 1px solid var(--border); border-radius: 22px;
+    padding: 22px 18px;
+    box-shadow: 0 10px 30px rgba(20, 10, 60, 0.08);
+  }
+  @media (min-width: 640px) { .card { padding: 32px 34px; } h2 { font-size: 1.9rem; } }
+  .eyebrow { font-size: 0.9rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--a2); margin-bottom: 6px; }
+  [data-theme="dark"] .eyebrow { color: #67e8f9; }
+  .step h2 { outline: none; }
+  .lead { font-size: 1.1rem; }
+
+  .callout { border-left: 5px solid var(--a1); background: var(--soft); padding: 14px 16px; border-radius: 12px; margin: 0 0 16px; }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout.warn { border-left-color: var(--warn-border); background: var(--warn-bg); color: var(--warn-text); }
+  .grid-2 { display: grid; gap: 12px; margin-bottom: 16px; }
+  @media (min-width: 640px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+  .mini { background: var(--card-solid); border: 1px solid var(--border); border-radius: 16px; padding: 16px; }
+  .mini h3 { margin-bottom: 6px; }
+  .mini p { margin: 0; }
+  .timeline { list-style: none; padding: 0; margin: 0 0 16px; }
+  .timeline li { background: var(--card-solid); border: 1px solid var(--border); border-radius: 16px; padding: 14px 16px; margin-bottom: 10px; }
+  .timeline .when { display: inline-block; font-weight: 800; color: var(--a1); margin-bottom: 2px; }
+  [data-theme="dark"] .timeline .when { color: #c4b5fd; }
+  .source-note { font-size: 0.95rem; color: var(--muted); border-top: 1px dashed var(--border); padding-top: 12px; }
+
+  /* ---------- Kotak salin ---------- */
+  .copybox { border: 2px solid var(--border); border-radius: 16px; overflow: hidden; margin: 0 0 16px; background: var(--code-bg); }
+  .copybox-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 8px 8px 14px; border-bottom: 1px solid var(--border); background: var(--card-solid); }
+  .copybox-head span { font-weight: 700; font-size: 0.95rem; }
+  .copy-btn { min-height: 44px; padding: 8px 16px; font-size: 0.95rem; }
+  .copy-btn.copied { background: var(--ok); color: #fff; }
+  .copybox pre {
+    margin: 0; padding: 14px 16px;
+    white-space: pre-wrap; word-wrap: break-word;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 1rem; line-height: 1.6; color: var(--text);
+  }
+
+  /* ---------- Aksi bahagian ---------- */
+  .step-actions { margin-top: 22px; display: grid; gap: 12px; }
+  .pager { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* ---------- Sijil ---------- */
+  label { display: block; font-weight: 700; margin-bottom: 6px; }
+  input[type="text"] {
+    width: 100%; min-height: 52px; padding: 10px 14px;
+    font: inherit; color: var(--text); background: var(--card-solid);
+    border: 2px solid var(--border); border-radius: 14px;
+  }
+  input[type="text"]:focus { border-color: var(--a1); outline: none; box-shadow: 0 0 0 3px var(--soft); }
+  .error { color: #b91c1c; font-weight: 700; margin-top: 8px; }
+  [data-theme="dark"] .error { color: #fca5a5; }
+  .hint { font-size: 0.95rem; color: var(--muted); }
+  .cert-actions { margin: 14px 0 10px; display: grid; gap: 10px; }
+  .remaining { display: grid; gap: 8px; margin-bottom: 8px; }
+  .remaining .btn { justify-content: flex-start; width: 100%; }
+
+  .certificate {
+    margin-top: 20px; padding: 8px; border-radius: 18px;
+    background: linear-gradient(135deg, #6d28d9, #0e7490, #db2777);
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .cert-inner {
+    background: #fffdf8; color: #1a1630;
+    border-radius: 12px; padding: 28px 18px;
+    text-align: center;
+    border: 1px solid #e9e2cf;
+  }
+  .cert-kicker { font-size: 0.85rem; letter-spacing: 0.25em; text-transform: uppercase; font-weight: 800; color: #6d28d9; margin-bottom: 18px; }
+  .cert-line { font-size: 1rem; color: #3d3a57; margin-bottom: 8px; }
+  .cert-name {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.6rem, 6vw, 2.6rem); font-weight: 700;
+    margin: 6px 0 12px; padding-bottom: 8px;
+    border-bottom: 2px solid #d9cfb5; word-wrap: break-word;
+  }
+  .cert-course { font-size: clamp(1.15rem, 4vw, 1.5rem); font-weight: 800; color: #0e7490; margin: 4px 0 22px; }
+  .cert-foot { display: flex; justify-content: center; }
+  .cert-foot div { display: flex; flex-direction: column; align-items: center; }
+  .cert-label { font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; color: #6b6787; }
+  #certDate { font-weight: 700; font-size: 1.05rem; }
+  @media (min-width: 640px) { .cert-inner { padding: 48px 40px; } }
+
+  /* ---------- Notis + footer ---------- */
+  .notice { background: var(--warn-bg); color: var(--warn-text); border: 1px solid var(--warn-border); border-radius: 14px; padding: 12px 14px; margin-bottom: 16px; font-size: 0.95rem; }
+  footer { text-align: center; padding: 0 0 40px; }
+  footer .btn { font-size: 0.95rem; }
+
+  /* ---------- Cetak ---------- */
+  @media print {
+    body.print-cert { background: #fff !important; }
+    body.print-cert .aurora,
+    body.print-cert .no-print,
+    body.print-cert footer { display: none !important; }
+    body.print-cert main { padding: 0; }
+    body.print-cert .wrap { max-width: none; padding: 0; }
+    body.print-cert .step { display: none !important; }
+    body.print-cert .step[data-step="7"] {
+      display: block !important; background: none; border: 0; box-shadow: none; padding: 0;
+      -webkit-backdrop-filter: none; backdrop-filter: none;
+    }
+    body.print-cert .certificate { margin: 0; }
+    body.print-cert .cert-inner { padding: 60px 50px; }
+    body.print-cert .cert-name { font-size: 40px; }
+    body.print-cert .cert-course { font-size: 26px; }
+    @page { size: A4 landscape; margin: 12mm; }
+  }
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><span class="b1"></span><span class="b2"></span><span class="b3"></span></div>
+
+<header class="topbar no-print">
+  <div class="wrap topbar-row">
+    <div class="brand">
+      <strong>Cara Bina Nota Digital</strong>
+      <span class="sub">Untuk peserta kursus</span>
+    </div>
+    <button id="themeBtn" class="btn btn-ghost theme-btn" type="button">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <span id="themeLabel">Gelap</span>
+    </button>
+  </div>
+  <div class="wrap">
+    <div class="progress-meta"><span id="progressText">0/6 bahagian selesai</span><span id="progressPct">0%</span></div>
+    <div class="progress" id="progressBar" role="progressbar" aria-label="Kemajuan" aria-valuemin="0" aria-valuemax="6" aria-valuenow="0">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <p class="intro no-print">Cara praktikal untuk susun nota, ringkaskan bahan, dan cari semula bila perlu. Baca setiap bahagian, kemudian tekan <b>Tandakan selesai</b>. Sijil dibuka selepas keenam-enam bahagian selesai.</p>
+
+  <nav class="steps-nav no-print" id="stepsNav" aria-label="Senarai bahagian"></nav>
+
+  <div id="storageNote" class="notice no-print" hidden>Pelayar ini menyekat storan, jadi kemajuan awak tak dapat disimpan. Kalau halaman ditutup, tanda selesai akan hilang.</div>
+
+  <!-- Bahagian 1 -->
+  <section class="step card" data-step="1" aria-labelledby="h-1">
+    <p class="eyebrow">Bahagian 1 daripada 6</p>
+    <h2 id="h-1" tabindex="-1">Pilih tempat simpan nota dulu</h2>
+    <p class="lead">Claude tak gantikan tempat simpan nota. Claude bantu di atas nota awak, bukan sebagai storan utama.</p>
+    <div class="callout">
+      <p><b>Apa perlu buat:</b> pilih <b>satu</b> tempat yang senang awak buka setiap hari. Contohnya Google Docs, Notion atau Obsidian.</p>
+    </div>
+    <div class="callout">
+      <p><b>Format:</b> simpan nota dalam format teks biasa (Markdown atau dokumen). Senang dipindah kalau awak tukar tool nanti.</p>
+    </div>
+  </section>
+
+  <!-- Bahagian 2 -->
+  <section class="step card" data-step="2" aria-labelledby="h-2" hidden>
+    <p class="eyebrow">Bahagian 2 daripada 6</p>
+    <h2 id="h-2" tabindex="-1">Susun struktur nota</h2>
+    <ul>
+      <li><b>Satu topik, satu nota.</b> Elak satu fail panjang yang jadi longgokan.</li>
+      <li><b>Setiap nota ada</b> tajuk, tarikh, sumber, dan tiga hingga lima poin utama.</li>
+      <li><b>Guna tag atau pautan</b> untuk hubungkan nota yang berkaitan.</li>
+    </ul>
+    <p>Templat di bawah ikut struktur yang sama. Salin dan guna untuk setiap nota baharu.</p>
+    <div class="copybox">
+      <div class="copybox-head"><span>Templat nota</span><button class="btn btn-ghost copy-btn" type="button" data-copy="tpl-nota">Salin</button></div>
+<pre id="tpl-nota">Tajuk:
+Tarikh:
+Sumber:
+
+Poin utama (3 hingga 5):
+1.
+2.
+3.
+
+Tag / pautan ke nota berkaitan:</pre>
+    </div>
+  </section>
+
+  <!-- Bahagian 3 -->
+  <section class="step card" data-step="3" aria-labelledby="h-3" hidden>
+    <p class="eyebrow">Bahagian 3 daripada 6</p>
+    <h2 id="h-3" tabindex="-1">Guna Claude untuk proses nota</h2>
+    <p>Ada empat cara Claude boleh bantu proses nota awak.</p>
+    <div class="grid-2">
+      <div class="mini">
+        <h3>1. Ringkaskan bahan</h3>
+        <p>Tampal artikel, transkrip atau kertas kerja. Minta ringkasan dalam 5 poin dengan sumber rujukan.</p>
+      </div>
+      <div class="mini">
+        <h3>2. Susun semula</h3>
+        <p>Minta Claude tukar nota mentah jadi struktur yang jelas: definisi, contoh, soalan.</p>
+      </div>
+      <div class="mini">
+        <h3>3. Soal balik</h3>
+        <p>Minta Claude uji faham awak dengan soalan latihan dari nota tu.</p>
+      </div>
+      <div class="mini">
+        <h3>4. Cadangkan sambungan</h3>
+        <p>Minta Claude cari hubung kait antara dua nota atau topik yang nampak berasingan.</p>
+      </div>
+    </div>
+    <p>Contoh prompt untuk cara 1 dan 2 ada di Bahagian 4.</p>
+  </section>
+
+  <!-- Bahagian 4 -->
+  <section class="step card" data-step="4" aria-labelledby="h-4" hidden>
+    <p class="eyebrow">Bahagian 4 daripada 6</p>
+    <h2 id="h-4" tabindex="-1">Contoh prompt untuk nota</h2>
+    <p>Salin prompt, kemudian guna bersama bahan atau nota mentah yang awak tampal.</p>
+    <div class="copybox">
+      <div class="copybox-head"><span>Prompt: ringkaskan bahan</span><button class="btn btn-ghost copy-btn" type="button" data-copy="p-ringkas">Salin</button></div>
+<pre id="p-ringkas">Ringkaskan teks ini dalam 5 poin. Tiap poin maksimum 20 patah perkataan. Senaraikan istilah baharu di hujung.</pre>
+    </div>
+    <div class="copybox">
+      <div class="copybox-head"><span>Prompt: susun nota mentah</span><button class="btn btn-ghost copy-btn" type="button" data-copy="p-susun">Salin</button></div>
+<pre id="p-susun">Susun nota mentah ini ikut tajuk: Definisi, Contoh, Kesilapan biasa. Jangan tambah fakta baharu.</pre>
+    </div>
+  </section>
+
+  <!-- Bahagian 5 -->
+  <section class="step card" data-step="5" aria-labelledby="h-5" hidden>
+    <p class="eyebrow">Bahagian 5 daripada 6</p>
+    <h2 id="h-5" tabindex="-1">Rutin ringkas</h2>
+    <ol class="timeline">
+      <li><span class="when">Harian</span><br>Tangkap idea dan bahan mentah dalam satu tempat. Tak perlu kemas.</li>
+      <li><span class="when">Mingguan</span><br>Ambil 20 minit. Minta Claude bantu kemaskan nota minggu tu dan tandakan yang belum jelas.</li>
+      <li><span class="when">Bulanan</span><br>Semak balik nota lama. Buang yang tak lagi relevan, dan gabungkan yang berulang.</li>
+    </ol>
+  </section>
+
+  <!-- Bahagian 6 -->
+  <section class="step card" data-step="6" aria-labelledby="h-6" hidden>
+    <p class="eyebrow">Bahagian 6 daripada 6</p>
+    <h2 id="h-6" tabindex="-1">Had yang perlu diingat</h2>
+    <div class="callout warn">
+      <p><b>Semak semula</b> fakta, nombor dan sumber yang Claude bagi. Claude boleh tersilap dengan yakin.</p>
+    </div>
+    <div class="callout warn">
+      <p><b>Jangan tampal maklumat sensitif</b> seperti data pelanggan, pelajar atau kata laluan ke dalam nota yang dikongsi.</p>
+    </div>
+    <p class="source-note">Nota ini ditulis dari pengalaman umum, bukan dari dokumentasi produk. Sahkan ciri tool tertentu dengan laman rasmi sebelum guna.</p>
+  </section>
+
+  <!-- Sijil -->
+  <section class="step card" data-step="7" aria-labelledby="h-7" hidden>
+    <div id="certLocked" class="no-print">
+      <p class="eyebrow">Sijil</p>
+      <h2 id="h-7" tabindex="-1">Sijil belum dibuka</h2>
+      <p>Lengkapkan semua bahagian dahulu. Yang belum selesai:</p>
+      <div class="remaining" id="remainingList"></div>
+    </div>
+
+    <div id="certReady" hidden>
+      <div class="no-print">
+        <p class="eyebrow">Semua bahagian selesai</p>
+        <h2 id="h-7b" tabindex="-1">Sijil anda</h2>
+        <label for="nameInput">Nama penuh (seperti mahu dicetak)</label>
+        <input type="text" id="nameInput" maxlength="80" autocomplete="name" placeholder="Taip nama anda">
+        <p id="nameError" class="error" hidden>Sila isi nama dahulu sebelum cetak.</p>
+        <div class="cert-actions">
+          <button id="printBtn" class="btn btn-primary" type="button">Cetak sijil</button>
+        </div>
+        <p class="hint">Tip: dalam tetingkap cetak, pilih "Save as PDF" kalau nak simpan sebagai fail.</p>
+      </div>
+
+      <div class="certificate" id="certificate">
+        <div class="cert-inner">
+          <p class="cert-kicker">Sijil Penyelesaian</p>
+          <p class="cert-line">Dengan ini disahkan bahawa</p>
+          <p class="cert-name" id="certName">Nama Peserta</p>
+          <p class="cert-line">telah melengkapkan keenam-enam bahagian</p>
+          <p class="cert-course" id="certCourse">Cara Bina Nota Digital</p>
+          <div class="cert-foot">
+            <div><span class="cert-label">Tarikh</span><span id="certDate">--/--/----</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="no-print">
+  <button id="resetBtn" class="btn btn-ghost" type="button">Mula semula</button>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  // Tukar nama kursus di sini kalau perlu
+  var KURSUS = 'Cara Bina Nota Digital';
+  var TOTAL = 6;
+  var KEY = 'nota-digital-claude-v1';
+  var SHORT = ['Tempat simpan', 'Struktur', 'Proses', 'Prompt', 'Rutin', 'Had', 'Sijil'];
+
+  var root = document.documentElement;
+  var storageOk = true;
+
+  function load() {
+    try {
+      var raw = window.localStorage.getItem(KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { storageOk = false; return null; }
+  }
+  function save() {
+    try { window.localStorage.setItem(KEY, JSON.stringify(state)); }
+    catch (e) { storageOk = false; }
+    document.getElementById('storageNote').hidden = storageOk;
+  }
+
+  var saved = load() || {};
+  var state = {
+    done: (Array.isArray(saved.done) && saved.done.length === TOTAL) ? saved.done.map(Boolean) : [false, false, false, false, false, false],
+    current: (typeof saved.current === 'number' && saved.current >= 1 && saved.current <= 7) ? saved.current : 1,
+    name: typeof saved.name === 'string' ? saved.name : '',
+    theme: (saved.theme === 'dark' || saved.theme === 'light') ? saved.theme : null,
+    completedAt: typeof saved.completedAt === 'string' ? saved.completedAt : null
+  };
+
+  /* ---------- Tema ---------- */
+  var themeBtn = document.getElementById('themeBtn');
+  var themeLabel = document.getElementById('themeLabel');
+  function systemDark() {
+    try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; }
+  }
+  function applyTheme() {
+    var t = state.theme || (systemDark() ? 'dark' : 'light');
+    root.setAttribute('data-theme', t);
+    themeLabel.textContent = t === 'dark' ? 'Cerah' : 'Gelap';
+    themeBtn.setAttribute('aria-label', t === 'dark' ? 'Tukar ke tema cerah' : 'Tukar ke tema gelap');
+  }
+  themeBtn.addEventListener('click', function () {
+    var now = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    state.theme = now;
+    applyTheme();
+    save();
+  });
+
+  /* ---------- Bina nav + butang aksi ---------- */
+  var nav = document.getElementById('stepsNav');
+  for (var i = 1; i <= 7; i++) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chip' + (i === 7 ? ' cert' : '');
+    b.setAttribute('data-go', String(i));
+    b.innerHTML = '<span class="n">' + (i === 7 ? 'Sijil' : i) + '</span>' + (i === 7 ? '' : '<span class="t">' + SHORT[i - 1] + '</span>');
+    b.setAttribute('aria-label', i === 7 ? 'Sijil' : 'Bahagian ' + i + ': ' + SHORT[i - 1]);
+    nav.appendChild(b);
+  }
+
+  var sections = Array.prototype.slice.call(document.querySelectorAll('.step'));
+  sections.forEach(function (sec) {
+    var n = Number(sec.getAttribute('data-step'));
+    if (n > TOTAL) return;
+    var wrap = document.createElement('div');
+    wrap.className = 'step-actions no-print';
+    wrap.innerHTML =
+      '<button class="btn btn-done" type="button" data-done="' + n + '">Tandakan selesai</button>' +
+      '<div class="pager">' +
+        '<button class="btn btn-ghost" type="button" data-prev>Sebelum</button>' +
+        '<button class="btn btn-primary" type="button" data-next>' + (n === TOTAL ? 'Ke sijil' : 'Seterusnya') + '</button>' +
+      '</div>';
+    sec.appendChild(wrap);
+  });
+
+  /* ---------- Tarikh DD/MM/YYYY ---------- */
+  function fmtDate(d) {
+    var dd = String(d.getDate()).padStart(2, '0');
+    var mm = String(d.getMonth() + 1).padStart(2, '0');
+    return dd + '/' + mm + '/' + d.getFullYear();
+  }
+
+  /* ---------- Render ---------- */
+  var els = {
+    fill: document.getElementById('progressFill'),
+    bar: document.getElementById('progressBar'),
+    text: document.getElementById('progressText'),
+    pct: document.getElementById('progressPct'),
+    locked: document.getElementById('certLocked'),
+    ready: document.getElementById('certReady'),
+    remaining: document.getElementById('remainingList'),
+    certName: document.getElementById('certName'),
+    certCourse: document.getElementById('certCourse'),
+    certDate: document.getElementById('certDate'),
+    nameInput: document.getElementById('nameInput'),
+    nameError: document.getElementById('nameError')
+  };
+
+  function render() {
+    var count = state.done.filter(Boolean).length;
+    var allDone = count === TOTAL;
+    var pct = Math.round((count / TOTAL) * 100);
+
+    if (allDone && !state.completedAt) state.completedAt = new Date().toISOString();
+    if (!allDone) state.completedAt = null;
+
+    els.fill.style.width = pct + '%';
+    els.bar.setAttribute('aria-valuenow', String(count));
+    els.text.textContent = count + '/' + TOTAL + ' bahagian selesai';
+    els.pct.textContent = pct + '%';
+
+    sections.forEach(function (sec) {
+      sec.hidden = Number(sec.getAttribute('data-step')) !== state.current;
+    });
+
+    Array.prototype.forEach.call(nav.children, function (chip) {
+      var n = Number(chip.getAttribute('data-go'));
+      if (n === state.current) chip.setAttribute('aria-current', 'step'); else chip.removeAttribute('aria-current');
+      chip.classList.toggle('is-done', n <= TOTAL ? state.done[n - 1] : allDone);
+      if (n === 7) chip.classList.toggle('locked', !allDone);
+    });
+
+    Array.prototype.forEach.call(document.querySelectorAll('[data-done]'), function (btn) {
+      var n = Number(btn.getAttribute('data-done'));
+      var d = state.done[n - 1];
+      btn.classList.toggle('is-done', d);
+      btn.setAttribute('aria-pressed', d ? 'true' : 'false');
+      btn.textContent = d ? '\u2713 Selesai (tekan untuk batal)' : 'Tandakan selesai';
+    });
+
+    Array.prototype.forEach.call(document.querySelectorAll('[data-prev]'), function (btn) {
+      btn.disabled = state.current <= 1;
+    });
+
+    els.locked.hidden = allDone;
+    els.ready.hidden = !allDone;
+    els.remaining.innerHTML = '';
+    for (var k = 0; k < TOTAL; k++) {
+      if (!state.done[k]) {
+        var rb = document.createElement('button');
+        rb.type = 'button';
+        rb.className = 'btn btn-ghost';
+        rb.setAttribute('data-go', String(k + 1));
+        rb.textContent = 'Bahagian ' + (k + 1) + ': ' + SHORT[k];
+        els.remaining.appendChild(rb);
+      }
+    }
+
+    els.certName.textContent = state.name.trim() || 'Nama Peserta';
+    els.certCourse.textContent = KURSUS;
+    els.certDate.textContent = fmtDate(state.completedAt ? new Date(state.completedAt) : new Date());
+
+    save();
+  }
+
+  function reduceMotion() {
+    try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; }
+  }
+  function go(n, focus) {
+    state.current = Math.min(7, Math.max(1, n));
+    render();
+    window.scrollTo({ top: 0, behavior: reduceMotion() ? 'auto' : 'smooth' });
+    if (focus) {
+      var sec = sections.filter(function (s) { return Number(s.getAttribute('data-step')) === state.current; })[0];
+      var h = sec && Array.prototype.filter.call(sec.querySelectorAll('h2'), function (x) { return x.offsetParent !== null; })[0];
+      if (h) { try { h.focus({ preventScroll: true }); } catch (e) { h.focus(); } }
+    }
+  }
+
+  /* ---------- Salin ---------- */
+  function copyText(text, btn) {
+    var original = 'Salin';
+    function done(ok) {
+      btn.textContent = ok ? 'Disalin' : 'Gagal. Pilih teks dan salin sendiri';
+      btn.classList.toggle('copied', ok);
+      setTimeout(function () { btn.textContent = original; btn.classList.remove('copied'); }, 2200);
+    }
+    function fallback() {
+      var ok = false;
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.top = '0';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        ta.setSelectionRange(0, text.length);
+        ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+      } catch (e) { ok = false; }
+      done(ok);
+    }
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(function () { done(true); }, fallback);
+      } else { fallback(); }
+    } catch (e) { fallback(); }
+  }
+
+  /* ---------- Klik ---------- */
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('button');
+    if (!t) return;
+    if (t.hasAttribute('data-go')) { go(Number(t.getAttribute('data-go')), true); return; }
+    if (t.hasAttribute('data-done')) {
+      var n = Number(t.getAttribute('data-done'));
+      state.done[n - 1] = !state.done[n - 1];
+      render();
+      return;
+    }
+    if (t.hasAttribute('data-prev')) { go(state.current - 1, true); return; }
+    if (t.hasAttribute('data-next')) { go(state.current + 1, true); return; }
+    if (t.hasAttribute('data-copy')) {
+      var src = document.getElementById(t.getAttribute('data-copy'));
+      if (src) copyText(src.textContent, t);
+    }
+  });
+
+  /* ---------- Sijil ---------- */
+  els.nameInput.value = state.name;
+  els.nameInput.addEventListener('input', function () {
+    state.name = els.nameInput.value.slice(0, 80);
+    if (state.name.trim()) els.nameError.hidden = true;
+    render();
+  });
+
+  document.getElementById('printBtn').addEventListener('click', function () {
+    if (!state.name.trim()) {
+      els.nameError.hidden = false;
+      els.nameInput.focus();
+      return;
+    }
+    document.body.classList.add('print-cert');
+    window.print();
+    setTimeout(function () { document.body.classList.remove('print-cert'); }, 1000);
+  });
+  window.addEventListener('beforeprint', function () {
+    if (state.current === 7 && state.done.every(Boolean)) document.body.classList.add('print-cert');
+  });
+  window.addEventListener('afterprint', function () { document.body.classList.remove('print-cert'); });
+
+  /* ---------- Reset ---------- */
+  document.getElementById('resetBtn').addEventListener('click', function () {
+    if (!window.confirm('Padam semua kemajuan dan mula semula?')) return;
+    state.done = [false, false, false, false, false, false];
+    state.current = 1;
+    state.name = '';
+    state.completedAt = null;
+    els.nameInput.value = '';
+    go(1, true);
+  });
+
+  applyTheme();
+  render();
+})();
+</script>
+</body>
+</html>

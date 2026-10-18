@@ -1,4 +1,5 @@
-import { api, adaToken, tetapkanToken, apabilaTamat } from './api.js';
+import { api, adaToken, tetapkanToken, apabilaTamat, MOD_DEMO } from './api.js';
+import { AKAUN_DEMO, KATA_DEMO } from './demo-info.js';
 
 const $app = document.getElementById('app');
 const $bar = document.getElementById('bar');
@@ -205,6 +206,19 @@ function halamanMasuk() {
     const tajuk = { masuk: 'Log masuk', daftar: 'Daftar akaun', kod: 'Sahkan emel', lupa: 'Lupa kata laluan', tetap: 'Tetapkan kata laluan baharu' }[mod];
     hantar.textContent = { masuk: 'Log masuk', daftar: 'Daftar', kod: 'Sahkan', lupa: 'Hantar kod', tetap: 'Simpan kata laluan' }[mod];
 
+    const demoKad = MOD_DEMO && mod === 'masuk' ? h('div', { class: 'kad auth' },
+      h('h2', {}, 'Mod demo: log masuk pantas'),
+      h('p', { class: 'muted' }, `Data contoh sahaja, disimpan dalam pelayar ini. Kata laluan semua akaun demo: ${KATA_DEMO}`),
+      h('div', { class: 'tindakan' }, AKAUN_DEMO.map(([label, e]) => h('button', {
+        type: 'button',
+        onclick: (ev) => jalankan(ev.target, async () => {
+          const d = await api('log_masuk', { emel: e, kata_laluan: KATA_DEMO });
+          tetapkanToken(d.token);
+          profil = d.profil;
+          location.hash = '#/';
+          render();
+        }),
+      }, label)))) : null;
     mount(h('div', { class: 'kad auth' }, h('h1', {}, tajuk),
       h('p', { class: 'muted' }, 'Tempahan kenderaan pusat. Untuk staf dalaman sahaja.'),
       h('form', {
@@ -221,7 +235,8 @@ function halamanMasuk() {
       ] : null,
       h('div', { class: 'tindakan' }, hantar),
       h('div', { class: 'langkah' },
-        mod === 'masuk' ? [pautan('Daftar akaun baharu', 'daftar'), pautan('Lupa kata laluan', 'lupa'), pautan('Saya ada kod pengesahan emel', 'kod')] : pautan('Kembali ke log masuk', 'masuk')))));
+        mod === 'masuk' ? [pautan('Daftar akaun baharu', 'daftar'), pautan('Lupa kata laluan', 'lupa'), pautan('Saya ada kod pengesahan emel', 'kod')] : pautan('Kembali ke log masuk', 'masuk')))),
+    demoKad);
   };
   papar();
 }
@@ -677,6 +692,31 @@ async function tabAudit(isi) {
     h('tbody', {}, log.map((l) => h('tr', {},
       h('td', {}, fmt(l.masa)), h('td', {}, l.pengguna), h('td', {}, l.tindakan), h('td', {}, l.jadual), h('td', {}, l.rekod)))))));
 }
+
+// ---------------------------------------------------------------- mod demo
+function pasangBannerDemo() {
+  const tutup = () => document.getElementById('peti-mel')?.remove();
+  const bukaPeti = async () => {
+    tutup();
+    const demo = await import('./demo.js');
+    const surat = await demo.petiMel();
+    const entiti = { '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'" };
+    const teksBersih = (html) => (html || '').replace(/<\/(p|div|li)>|<br\s*\/?>/gi, ' ').replace(/<[^>]*>/g, '')
+      .replace(/&(amp|lt|gt|quot|#39);/g, (e) => entiti[e]).replace(/\s+/g, ' ').trim();
+    document.body.append(h('div', { id: 'peti-mel', class: 'peti-mel' },
+      h('div', { class: 'peti-kad' },
+        h('div', { class: 'baris-peti' }, h('h2', {}, 'Peti mel demo'), h('button', { onclick: tutup }, 'Tutup')),
+        h('p', { class: 'muted' }, 'Dalam sistem sebenar, emel ini dihantar melalui Gmail. Di sini ia dipaparkan supaya anda boleh baca kod pengesahan.'),
+        surat.length ? surat.map((m) => h('div', { class: 'surat' },
+          h('b', {}, m.subject), h('div', { class: 'muted' }, `Kepada: ${m.to} - ${fmt(m.masa)}`), h('div', {}, teksBersih(m.htmlBody))))
+          : h('p', { class: 'muted' }, 'Tiada emel lagi.'))));
+  };
+  document.body.prepend(h('div', { class: 'banner-demo' },
+    h('span', {}, 'MOD DEMO: data contoh, disimpan dalam pelayar ini sahaja. Bukan sistem sebenar.'),
+    h('button', { onclick: bukaPeti }, 'Peti mel demo'),
+    h('button', { onclick: async () => { if (confirm('Set semula semua data demo?')) (await import('./demo.js')).setSemulaDemo(); } }, 'Set semula demo')));
+}
+if (MOD_DEMO) pasangBannerDemo();
 
 // -------------------------------------------------------------- mula
 (async () => {

@@ -9,12 +9,24 @@ Pemohon hantar → no. rujukan → Penyemak semak ⇄ Dipulangkan (pemohon betul
 Semua tindakan direkod dalam lembaran Audit.
 ```
 
+## Cuba dulu tanpa Google (mod demo)
+
+Selagi `docs/config.js` masih ada nilai `GANTI-...`, laman di GitHub Pages berjalan dalam **mod demo**: kod backend Apps Script yang sama dijalankan di dalam pelayar anda, dengan data contoh. Tiada Google, tiada pelayan. Data disimpan dalam `localStorage` pelayar itu sahaja, jadi ia tidak dikongsi antara peranti dan tidak boleh dijadikan sistem sebenar.
+
+- Halaman log masuk ada butang log masuk pantas untuk Pemohon, Penyemak, Pelulus dan Admin (kata laluan semua: `Demo12345`).
+- Data contoh merangkumi permohonan yang diluluskan, menunggu kelulusan, baru dihantar, dipulangkan, ditolak dan draf.
+- Butang **Peti mel demo** di bar kuning memaparkan emel yang akan dihantar (termasuk kod pengesahan semasa daftar akaun baharu).
+- **Set semula demo** memulihkan data contoh.
+- Mod demo hilang sendiri apabila anda tampal URL Web App sebenar ke `docs/config.js`.
+- Selepas mengubah mana-mana fail dalam `apps-script/`, jalankan `node tempahan-sheets/scripts/bina-demo.mjs` untuk mengemas kini `docs/demo/backend.js` (fail dijana, jangan sunting manual), kemudian commit.
+
 ## Struktur
 
 ```
 tempahan-sheets/apps-script/   kod backend (salin ke projek Apps Script)
 tempahan-sheets/test/          ujian backend dan ujian hujung-ke-hujung
 docs/                          frontend, diterbitkan oleh GitHub Pages
+docs/demo/backend.js           dijana daripada apps-script/*.gs, untuk mod demo
 ```
 
 ## Cara ia melindungi data (7 teknik sekuriti)
@@ -68,6 +80,8 @@ Pengesahan emel guna kod 6 digit supaya tiada orang boleh mendaftar atas nama em
 ```bash
 node tempahan-sheets/test/uji_backend.mjs   # 190 semakan backend dengan tiruan API Google
 node tempahan-sheets/test/uji_ui.mjs        # UI sebenar + backend sebenar, hujung-ke-hujung (perlukan Playwright)
+node tempahan-sheets/test/uji_demo.mjs      # mod demo penuh dalam Chromium (perlukan Playwright)
+node tempahan-sheets/scripts/bina-demo.mjs --semak   # pastikan docs/demo/backend.js tidak lapuk
 ```
 
 Ujian backend meliputi aliran penuh, pemisahan tugas, kawalan peranan, tempahan bertindih, pemandu bertindih, had 60 hari, had pemulangan, tamat tempoh, formula injection, muat naik fail, audit, retensi, rate limit dan pengesahan emel.

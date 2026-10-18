@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Guna Claude dengan Betul</title>
+<style>
+:root{
+  --bg:#14100d; --cream:#f6efe4; --coral:#e8805c; --gold:#ffd36b; --teal:#6fd0bf;
+  --red:#ff6b6b; --mute:#8d857b; --card:#241d18;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg);font-family:'Inter','Inter Display',sans-serif;color:var(--cream)}
+#root{position:relative;width:1080px;height:1920px;overflow:hidden}
+.blob{position:absolute;border-radius:50%;filter:blur(120px);opacity:.5}
+#b1{width:900px;height:900px;background:#7a3b24}
+#b2{width:800px;height:800px;background:#1f5a52}
+#grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:90px 90px}
+#bar{position:absolute;left:0;top:0;height:10px;background:var(--coral);width:0}
+.scene{position:absolute;left:0;top:0;width:1080px;height:1400px;opacity:0}
+.abs{position:absolute;opacity:0}
+.c{left:0;width:1080px;text-align:center}
+.t{font-weight:900;letter-spacing:-.03em;line-height:1}
+.mk{position:relative;display:inline-block;padding:0 22px;color:#1a120c;z-index:0}
+.mk::before{content:"";position:absolute;inset:6% 0 2% 0;background:var(--gold);border-radius:14px;z-index:-1;transform-origin:left center;transform:scaleX(var(--mp,0));transform:skewX(-4deg) scaleX(var(--mp,0))}
+.mk.red::before{background:var(--red)}
+.mk.coral::before{background:var(--coral)}
+.mk.teal::before{background:var(--teal)}
+.badge{width:170px;height:170px;border-radius:50%;background:var(--coral);color:#1a120c;font-weight:900;font-size:118px;display:flex;align-items:center;justify-content:center;left:455px;box-shadow:0 0 0 14px rgba(232,128,92,.22)}
+.card{background:var(--card);border:3px solid rgba(255,255,255,.09);border-radius:44px;padding:44px 52px;font-weight:800}
+.row{left:90px;width:900px;height:190px;display:flex;align-items:center;gap:44px;font-size:68px}
+.row svg{flex:none}
+.chip{display:inline-flex;align-items:center;justify-content:center}
+#sub{position:absolute;left:0;top:1440px;width:1080px;height:420px;padding:0 70px;display:flex;align-items:flex-start;justify-content:center}
+#subtext{font-size:68px;font-weight:800;line-height:1.28;text-align:center;letter-spacing:-.01em}
+.w{display:inline-block;margin:0 .2em;opacity:.38;transition:none}
+.w.k{position:relative}
+#subfade{position:absolute;left:0;top:1360px;width:1080px;height:140px;background:linear-gradient(transparent,var(--bg));pointer-events:none}
+</style>
+</head>
+<body>
+<div id="root">
+  <div class="blob" id="b1"></div><div class="blob" id="b2"></div><div id="grid"></div>
+  <div id="bar"></div>
+
+  <!-- S1: hook -->
+  <div class="scene" id="s1">
+    <svg id="spark" class="abs" style="left:390px;top:90px" width="300" height="300" viewBox="-100 -100 200 200">
+      <g fill="#e8805c"><path id="sp" d="M0-96 C6-40 40-6 96 0 C40 6 6 40 0 96 C-6 40 -40 6 -96 0 C-40-6 -6-40 0-96Z"/></g>
+      <g fill="#ffd36b" transform="rotate(45) scale(.55)"><path d="M0-96 C6-40 40-6 96 0 C40 6 6 40 0 96 C-6 40 -40 6 -96 0 C-40-6 -6-40 0-96Z"/></g>
+    </svg>
+    <div class="abs c t" id="s1a" style="top:430px;font-size:210px">Claude</div>
+    <div class="abs c t" id="s1b" style="top:680px;font-size:92px;color:#d8cfc2">boleh membantu kita</div>
+    <div class="abs c t" id="s1c" style="top:800px;font-size:96px">bekerja <span style="color:var(--mute)">dengan</span> lebih</div>
+    <div class="abs c t" id="s1d" style="top:930px;font-size:250px"><span class="mk" id="mk_bijak">BIJAK</span></div>
+  </div>
+
+  <!-- S2: cara yang betul -->
+  <div class="scene" id="s2">
+    <div class="abs c t" id="s2a" style="top:230px;font-size:128px;color:var(--mute)">Tetapi…</div>
+    <div class="abs c t" id="s2b" style="top:430px;font-size:104px">cara guna mesti</div>
+    <div class="abs c t" id="s2c" style="top:610px;font-size:300px"><span class="mk teal" id="mk_betul">BETUL</span></div>
+    <svg id="s2d" class="abs" style="left:390px;top:990px" width="300" height="300" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="44" fill="none" stroke="#6fd0bf" stroke-width="6"/>
+      <path id="s2dp" d="M28 52 L45 68 L74 34" fill="none" stroke="#6fd0bf" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>
+    </svg>
+  </div>
+
+  <!-- S3: langkah 1 -->
+  <div class="scene" id="s3">
+    <div class="abs badge" id="s3a" style="top:70px">1</div>
+    <div class="abs c t" id="s3b" style="top:290px;font-size:112px">Arahan</div>
+    <div class="abs c t" id="s3c" style="top:430px;font-size:112px"><span class="mk" id="mk_jelas">JELAS</span></div>
+    <div class="abs c t" id="s3d" style="top:570px;font-size:80px;color:#d8cfc2">dan <span class="mk coral" id="mk_spes" style="color:#1a120c;font-size:112px">SPESIFIK</span></div>
+    <div class="abs card" id="s3e" style="left:90px;top:820px;width:900px;font-size:58px;border-color:rgba(255,107,107,.5)">
+      <div style="font-size:34px;color:var(--red);margin-bottom:12px">✕ SAMAR</div>"Buat video"
+    </div>
+    <div class="abs card" id="s3f" style="left:90px;top:1060px;width:900px;font-size:50px;border-color:rgba(111,208,191,.7);background:#1d2b28">
+      <div style="font-size:34px;color:var(--teal);margin-bottom:12px">✓ SPESIFIK</div>"Buat video 30 saat, gaya santai, untuk Reels"
+    </div>
+  </div>
+
+  <!-- S4: langkah 2 -->
+  <div class="scene" id="s4">
+    <div class="abs badge" id="s4a" style="top:70px">2</div>
+    <div class="abs c t" id="s4b" style="top:290px;font-size:104px">Beri</div>
+    <div class="abs c t" id="s4c" style="top:420px;font-size:170px"><span class="mk" id="mk_konteks">KONTEKS</span></div>
+    <div class="abs card row" id="s4d" style="top:700px">
+      <svg width="110" height="110" viewBox="0 0 100 100" fill="none" stroke="#e8805c" stroke-width="7"><circle cx="50" cy="50" r="40"/><circle cx="50" cy="50" r="23"/><circle cx="50" cy="50" r="6" fill="#e8805c"/></svg>Tujuan</div>
+    <div class="abs card row" id="s4e" style="top:920px">
+      <svg width="110" height="110" viewBox="0 0 100 100" fill="none" stroke="#ffd36b" stroke-width="7" stroke-linecap="round"><circle cx="36" cy="34" r="14"/><path d="M10 82c2-18 14-26 26-26s24 8 26 26"/><circle cx="70" cy="40" r="11"/><path d="M66 58c14 0 22 8 24 22"/></svg>Sasaran pengguna</div>
+    <div class="abs card row" id="s4f" style="top:1140px">
+      <svg width="110" height="110" viewBox="0 0 100 100" fill="none" stroke="#6fd0bf" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 8h38l20 20v64H22z"/><path d="M60 8v20h20"/><path d="M34 50h34M34 64h34M34 78h22"/></svg>Format output</div>
+  </div>
+
+  <!-- S5: langkah 3a -->
+  <div class="scene" id="s5">
+    <div class="abs badge" id="s5a" style="top:70px">3</div>
+    <div class="abs c t" id="s5b" style="top:290px;font-size:170px"><span class="mk" id="mk_semak">SEMAK</span></div>
+    <div class="abs c t" id="s5c" style="top:490px;font-size:100px;color:#d8cfc2">semula setiap hasil</div>
+    <div class="abs card" id="s5d" style="left:190px;top:700px;width:700px;height:600px;padding:56px;overflow:hidden">
+      <div style="height:26px;border-radius:13px;background:#4a4036;width:70%;margin-bottom:34px"></div>
+      <div style="height:26px;border-radius:13px;background:#4a4036;width:94%;margin-bottom:34px"></div>
+      <div style="height:26px;border-radius:13px;background:#4a4036;width:84%;margin-bottom:34px"></div>
+      <div style="height:26px;border-radius:13px;background:#4a4036;width:90%;margin-bottom:34px"></div>
+      <div style="height:26px;border-radius:13px;background:#4a4036;width:60%;margin-bottom:34px"></div>
+      <div style="height:26px;border-radius:13px;background:#4a4036;width:76%"></div>
+      <svg id="ck1" class="abs" style="left:560px;top:96px" width="80" height="80" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#6fd0bf"/><path d="M27 52 L44 68 L74 34" fill="none" stroke="#14100d" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg id="ck2" class="abs" style="left:560px;top:238px" width="80" height="80" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#6fd0bf"/><path d="M27 52 L44 68 L74 34" fill="none" stroke="#14100d" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg id="ck3" class="abs" style="left:560px;top:380px" width="80" height="80" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#6fd0bf"/><path d="M27 52 L44 68 L74 34" fill="none" stroke="#14100d" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <svg id="mag" class="abs" style="left:420px;top:760px" width="330" height="330" viewBox="0 0 100 100" fill="none" stroke="#ffd36b" stroke-width="8" stroke-linecap="round">
+      <circle cx="42" cy="42" r="26" fill="rgba(255,211,107,.12)"/><path d="M62 62 L88 88" stroke-width="12"/></svg>
+  </div>
+
+  <!-- S6: langkah 3b, AI boleh silap -->
+  <div class="scene" id="s6">
+    <div class="abs c t" id="s6a" style="top:120px;font-size:96px;color:#d8cfc2">Jangan terus terima</div>
+    <div class="abs c t" id="s6b" style="top:250px;font-size:120px;position:absolute"><span id="bb" style="position:relative;display:inline-block">bulat-bulat<svg style="position:absolute;left:-20px;top:30px" width="640" height="70" viewBox="0 0 640 70"><path id="bbl" d="M0 40 L640 28" stroke="#ff6b6b" stroke-width="14" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg></span></div>
+    <svg id="s6c" class="abs" style="left:340px;top:480px" width="400" height="360" viewBox="0 0 100 90" fill="none" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M50 8 L94 82 H6 Z" fill="rgba(255,107,107,.15)" stroke="#ff6b6b" stroke-width="5"/><path d="M50 34v26" stroke="#ff6b6b" stroke-width="8"/><circle cx="50" cy="71" r="2" fill="#ff6b6b" stroke="#ff6b6b" stroke-width="4"/></svg>
+    <div class="abs c t" id="s6d" style="top:900px;font-size:130px"><span style="color:var(--gold)">AI</span> pun boleh</div>
+    <div class="abs c t" id="s6e" style="top:1060px;font-size:170px"><span class="mk red" id="mk_silap">SILAP</span></div>
+  </div>
+
+  <!-- S7: rakan berfikir -->
+  <div class="scene" id="s7">
+    <svg id="s7a" class="abs" style="left:400px;top:60px" width="280" height="280" viewBox="0 0 100 100" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M50 10c-17 0-28 12-28 27 0 10 5 16 10 22 3 4 4 7 4 12h28c0-5 1-8 4-12 5-6 10-12 10-22 0-15-11-27-28-27z" fill="rgba(255,211,107,.18)" stroke="#ffd36b" stroke-width="5"/>
+      <path d="M38 78h24M41 88h18" stroke="#ffd36b" stroke-width="5"/></svg>
+    <div class="abs c t" id="s7b" style="top:370px;font-size:96px;color:#d8cfc2">Claude sebagai</div>
+    <div class="abs c t" id="s7c" style="top:490px;font-size:150px"><span class="mk" id="mk_rakan">RAKAN</span></div>
+    <div class="abs c t" id="s7d" style="top:670px;font-size:150px"><span class="mk coral" id="mk_fikir" style="color:#1a120c">BERFIKIR</span></div>
+    <div class="abs card" id="s7e" style="left:140px;top:960px;width:800px;text-align:center;font-size:76px;color:var(--mute);position:absolute">
+      <span style="position:relative;display:inline-block">Pengganti<svg style="position:absolute;left:-10px;top:36px" width="400" height="30" viewBox="0 0 400 30"><path id="s7strike" d="M0 15 L400 15" stroke="#ff6b6b" stroke-width="12" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg></span>
+    </div>
+    <div class="abs c t" id="s7f" style="top:1160px;font-size:84px">pemikiran <span style="color:var(--coral)">kita</span></div>
+  </div>
+
+  <!-- S8: outro -->
+  <div class="scene" id="s8">
+    <div class="abs c t" id="s8a" style="top:140px;font-size:96px">3 langkah mudah</div>
+    <div class="abs card row" id="s8b" style="top:340px"><span class="chip" style="width:100px;height:100px;border-radius:50%;background:var(--coral);color:#1a120c;font-size:64px;font-weight:900">1</span>Arahan jelas</div>
+    <div class="abs card row" id="s8c" style="top:570px"><span class="chip" style="width:100px;height:100px;border-radius:50%;background:var(--gold);color:#1a120c;font-size:64px;font-weight:900">2</span>Beri konteks</div>
+    <div class="abs card row" id="s8d" style="top:800px"><span class="chip" style="width:100px;height:100px;border-radius:50%;background:var(--teal);color:#1a120c;font-size:64px;font-weight:900">3</span>Semak hasil</div>
+    <div class="abs c t" id="s8e" style="top:1100px;font-size:78px;color:var(--cream)">Claude = <span style="color:var(--gold)">rakan berfikir</span></div>
+  </div>
+
+  <div id="subfade"></div>
+  <div id="sub"><div id="subtext"></div></div>
+</div>
+
+<script>
+const T = window.TIMING, W = T.words, PH = T.phrases;
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const P=(t,t0,d)=>clamp((t-t0)/d);
+const outCubic=p=>1-Math.pow(1-p,3);
+const outBack=p=>{const c=1.9;return 1+(c+1)*Math.pow(p-1,3)+c*Math.pow(p-1,2)};
+const $=id=>document.getElementById(id);
+// cari masa mula perkataan (nth = kejadian ke-n, 0-based)
+const wt=(txt,nth=0)=>{const m=W.filter(w=>w.w.toLowerCase()===txt.toLowerCase());return m[nth].s};
+const we=(txt,nth=0)=>{const m=W.filter(w=>w.w.toLowerCase()===txt.toLowerCase());return m[nth].e};
+
+// jadual adegan [id, mula, tamat]
+const SC=[
+ ["s1",0,PH.p1[1]],["s2",PH.p2[0],PH.p2[1]],["s3",PH.p3a[0],PH.p3b[1]],["s4",PH.p4a[0],PH.p4b[1]],
+ ["s5",PH.p5a[0],PH.p5a[1]],["s6",PH.p5b[0],PH.p5b[1]],["s7",PH.p6a[0],PH.p6b[1]],["s8",PH.p6b[1],30]
+];
+// animasi elemen: [id, masa, jenis, tempoh]
+const AN=[
+ ["spark",.1,"pop"],["s1a",wt("claude",0),"pop"],["s1b",wt("boleh",0),"up"],["s1c",wt("bekerja"),"up"],["s1d",wt("bijak"),"pop"],
+ ["s2a",wt("tetapi"),"up"],["s2b",wt("cara"),"up"],["s2c",wt("betul"),"pop"],["s2d",wt("betul")+.25,"pop"],
+ ["s3a",wt("pertama"),"pop"],["s3b",wt("arahan"),"up"],["s3c",wt("jelas"),"pop"],["s3d",wt("spesifik")-.25,"up"],
+ ["s3e",wt("supaya")+.1,"up"],["s3f",wt("memahami"),"up"],
+ ["s4a",wt("kedua"),"pop"],["s4b",wt("berikan",1),"up"],["s4c",wt("konteks"),"pop"],
+ ["s4d",wt("tujuan"),"left"],["s4e",wt("sasaran"),"left"],["s4f",wt("format"),"left"],
+ ["s5a",wt("ketiga"),"pop"],["s5b",wt("semak"),"pop"],["s5c",wt("semula"),"up"],["s5d",wt("semak")+.25,"up"],["mag",wt("semula")+.1,"pop"],
+ ["s6a",wt("jangan"),"up"],["s6b",wt("terima"),"up"],["s6c",wt("kerana"),"pop"],["s6d",wt("ai"),"up"],["s6e",wt("kesilapan")-.15,"pop"],
+ ["s7a",wt("rakan"),"pop"],["s7b",wt("sebagai"),"up"],["s7c",wt("rakan"),"pop"],["s7d",wt("berfikir"),"pop"],
+ ["s7e",wt("bukan"),"up"],["s7f",wt("pemikiran"),"up"],
+ ["s8a",PH.p6b[1]+.05,"up"],["s8b",PH.p6b[1]+.2,"left"],["s8c",PH.p6b[1]+.4,"left"],["s8d",PH.p6b[1]+.6,"left"],["s8e",PH.p6b[1]+.85,"up"]
+];
+// penanda (highlighter) [id, masa]
+const MK=[["mk_bijak",wt("bijak")+.15],["mk_betul",wt("betul")+.1],["mk_jelas",wt("jelas")],["mk_spes",wt("spesifik")],
+ ["mk_konteks",wt("konteks")],["mk_semak",wt("semak")],["mk_silap",wt("kesilapan")],["mk_rakan",wt("rakan")+.05],["mk_fikir",wt("berfikir")]];
+
+function applyAN(t){
+  for(const [id,t0,kind] of AN){
+    const el=$(id); if(!el) continue;
+    const p=P(t,t0,.5), e=outCubic(p), b=outBack(p);
+    el.style.opacity=clamp(p*3);
+    let tr="";
+    if(kind==="pop") tr=`scale(${.55+.45*b})`;
+    else if(kind==="up") tr=`translateY(${(1-e)*60}px)`;
+    else if(kind==="left") tr=`translateX(${(1-e)*-220}px)`;
+    el.style.transform=tr;
+  }
+  for(const [id,t0] of MK){ const m=outCubic(P(t,t0,.35)); const el=$(id); el.style.setProperty("--mp",m); el.style.color = m>.35 ? "#1a120c" : "#f6efe4"; }
+}
+
+function applyScenes(t){
+  for(const [id,a,b] of SC){
+    const el=$(id);
+    const pin=outCubic(P(t,a,.4)), pout=P(t,b,.3);
+    const vis = t>=a && t<b+.3;
+    el.style.display = vis?"block":"none";
+    if(!vis) continue;
+    const last = id==="s8";
+    el.style.opacity = (a===0?1:pin) * (last?1:(1-pout));
+    el.style.transform = `translateY(${(1-pin)*(a===0?0:50) - pout*40}px) scale(${1-pout*.04})`;
+  }
+}
+
+// perkataan khas
+function applySpecial(t){
+  // tanda semak muncul satu persatu
+  [["ck1",0],["ck2",.5],["ck3",1]].forEach(([id,d])=>{
+    const t0=wt("setiap")+d, p=P(t,t0,.35), el=$(id);
+    el.style.opacity=clamp(p*4); el.style.transform=`scale(${.3+.7*outBack(p)})`;
+  });
+  // kaca pembesar menyapu dokumen
+  const m=$("mag"), ms=wt("semula")+.1;
+  const sw=Math.sin((t-ms)*2.2);
+  m.style.left=(380+sw*90)+"px"; m.style.top=(820+Math.sin((t-ms)*3.1)*80+(t-ms)*20)+"px";
+  // garis lintang
+  $("bbl").style.strokeDashoffset=1-outCubic(P(t,wt("bulat-bulat"),.45));
+  $("bb").style.color = t>wt("bulat-bulat")+.2 ? "#8d857b" : "";
+  $("s2dp").style.strokeDashoffset=1-outCubic(P(t,wt("betul")+.35,.4));
+  $("s7strike").style.strokeDashoffset=1-outCubic(P(t,wt("pengganti"),.45));
+  $("s7e").style.opacity = P(t,wt("bukan"),.3) * (1-.35*P(t,wt("pengganti"),.45));
+  // amaran bergegar
+  const sh=wt("kesilapan");
+  const amp = (t>sh-.1 && t<sh+.9) ? Math.sin((t-sh)*50)*10*(1-P(t,sh,.9)) : 0;
+  $("s6c").style.transform = `scale(${.55+.45*outBack(P(t,wt("kerana"),.5))}) translateX(${amp}px) rotate(${amp*.4}deg)`;
+  $("s6e").style.transform = `scale(${.55+.45*outBack(P(t,sh-.15,.5))}) translateX(${amp*1.3}px)`;
+  // percikan Claude berputar
+  $("sp").parentNode.parentNode.style.rotate = (t*40)+"deg";
+}
+
+// latar
+function applyBG(t){
+  $("b1").style.transform=`translate(${-200+Math.sin(t*.5)*160}px,${100+Math.cos(t*.4)*200}px)`;
+  $("b2").style.transform=`translate(${520+Math.cos(t*.45)*180}px,${900+Math.sin(t*.35)*260}px)`;
+  $("grid").style.transform=`translateY(${(t*30)%90}px)`;
+  $("bar").style.width=(t/30*1080)+"px";
+}
+
+// sari kata karaoke
+let curPhrase=null;
+function applySub(t){
+  const ids=Object.keys(PH);
+  let ph=null;
+  for(const id of ids){ const [a,b]=PH[id]; if(t>=a-.02 && t<b+.12){ph=id;break;} }
+  const box=$("subtext");
+  if(ph!==curPhrase){
+    curPhrase=ph; box.innerHTML="";
+    if(ph) for(const w of W.filter(x=>x.phrase===ph)){
+      const s=document.createElement("span"); s.className="w"+(w.key?" k":""); s.textContent=w.w; box.appendChild(s);
+    }
+  }
+  if(!ph){ return; }
+  const ws=W.filter(x=>x.phrase===ph), spans=box.children;
+  ws.forEach((w,i)=>{
+    const s=spans[i], on=t>=w.s, cur=t>=w.s && t<w.e;
+    s.style.opacity=on?1:.38;
+    const k=w.key&&on;
+    s.style.color=k?"#ffd36b":"#f6efe4";
+    s.style.transform = cur?"scale(1.06)":"scale(1)";
+  });
+}
+
+window.seek=function(t){
+  applyBG(t); applyScenes(t); applyAN(t); applySpecial(t); applySub(t);
+};
+seek(0);
+</script>
+</body>
+</html>
